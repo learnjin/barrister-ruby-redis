@@ -52,7 +52,6 @@ module Barrister
         handlers.each do |(interface_name, interface_klass)|
           @server.add_handler interface_name, interface_klass.new
         end
-
       end
 
       def start

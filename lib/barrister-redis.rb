@@ -9,7 +9,7 @@ module Barrister
 
     class Redis
 
-      def initialize(list_name, database_url)
+      def initialize(database_url, list_name)
         @list_name = list_name
         @client = ::Redis.connect url: database_url
       end
@@ -38,7 +38,7 @@ module Barrister
 
     class Redis
 
-      def initialize(json_path, database_url, list_name, handlers=[])
+      def initialize(json_path, database_url, list_name, handlers)
         @list_name = list_name
 
         # establish connection to Redis
@@ -49,8 +49,8 @@ module Barrister
         @server  = Barrister::Server.new(contract)
 
         # register each provided handler
-        handlers.each do |(interface_name, interface_klass)|
-          @server.add_handler interface_name, interface_klass.new
+        handlers.each do |handler_klass|
+          @server.add_handler handler_klass.to_s, handler_klass.new
         end
       end
 
@@ -69,7 +69,6 @@ module Barrister
           # 'respond' by inserting our reply at the head of a 'reply'-list
           @client.lpush(parsed['reply_to'], JSON.generate(response))
         end
-
       end
 
     end

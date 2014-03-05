@@ -31,19 +31,28 @@ module Barrister
 
   class RedisContainer
 
-    def initialize(json_path, database_url, list_name, handlers)
-      @list_name = list_name
+    def initialize(json_path, handlers, options={})
+      options = {
+        database_url: 'redis://localhost:6379',
+        list_name: json_path.split('/')[-1].split('.')[0]
+      }.merge(options)
+
+      @list_name = options[:list_name]
 
       # establish connection to Redis
-      @client = ::Redis.connect url: database_url
+      @client = ::Redis.connect url: options[:database_url]
 
       # initialize service
       contract = Barrister::contract_from_file(json_path)
       @server  = Barrister::Server.new(contract)
 
+      # in case we are passed a single handler
+      handlers = handlers.kind_of?(Array) ? handlers : [handlers]
+
       # register each provided handler
-      handlers.each do |handler_klass|
-        @server.add_handler handler_klass.to_s, handler_klass.new
+      handlers.each do |handler|
+        iface_name = handler.class.to_s.split('::').last
+        @server.add_handler iface_name, handler
       end
     end
 

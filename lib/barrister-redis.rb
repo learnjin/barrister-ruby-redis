@@ -6,9 +6,13 @@ module Barrister
 
   class RedisTransport
 
-    def initialize(database_url, list_name)
+    def initialize(list_name, options={})
+      options = {
+        database_url: 'redis://localhost:6379'
+      }.merge(options)
+
       @list_name = list_name
-      @client = ::Redis.connect url: database_url
+      @client = ::Redis.connect url: options[:database_url]
     end
 
     def request(message)

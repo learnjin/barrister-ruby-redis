@@ -4,27 +4,39 @@ A Redis server-container and transport for Barrister RPC.
 
 ## Usage
 
-To instantiate a Redis transport, you need only the URL of the Redis database
-and the name of the list that client and server will be using as a message bus:
+To instantiate a Redis transport, at a minimum you need the name of the list
+that the client and server will be using as a message bus. If no database_url
+is specified in the options hash, redis://localhost:6379 will be used as the
+default.
 
 ```ruby
 
-list_name = 'foo_bar'
-transport = Barrister::RedisTransport.new('redis://localhost:6379', list_name)
+transport_a = Barrister::RedisTransport.new 'user_service'
+transport_b = Barrister::RedisTransport.new 'user_service', database_url: ENV['OPEN_REDIS_URL']
 
 ```
 
-Instantiating a Redis container is easy as well, and follows a similar pattern:
+Instantiating a Redis container is easy as well. By default, the container 
+requires a path to the JSON output of the IDL to JSON conversion and an
+instantiated handler whose name matches the name of an interface in the IDL.
+By default, the RedisContainer will use the name of the JSON file for the
+name of the list (e.g. './foo/user\_service.json' will result in the 
+'user\_service' list).
 
 ```ruby
 
-json_path    = './user_service.json'
-database_url = 'redis://localhost:6379'
-list_name    = 'foo_bar'
-handlers     = [UserService]
+container_a = Barrister::RedisContainer.new './user_service.json', UserService.new
+container_a.start
 
-container = Barrister::RedisContainer.new json_path, database_url, list_name, handlers
-container.start
+```
+
+For more advanced users, additional options can be specified:
+
+```ruby
+
+opts = { database_url: ENV['OPEN_REDIS_URL'], list_name: 'some_list_name' }
+container_b = Barrister::RedisContainer.new './user_service.json', UserService.new, opts
+container_b.start
 
 ```
 

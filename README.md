@@ -6,6 +6,11 @@ A Redis server-container and transport for Barrister RPC.
 
 First, check out Barrister RPC here: http://barrister.bitmechanic.com
 
+## Reference Implementation
+
+For a working example of a Rails UI backed by services using the
+RedisTransport and RedisContainer, see https://github.com/laser/ruby-micro-services-redis
+
 ## Usage
 
 To instantiate a Redis transport, at a minimum you need the name of the list

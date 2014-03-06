@@ -2,6 +2,10 @@
 
 A Redis server-container and transport for Barrister RPC.
 
+## Before Getting Started
+
+First, check out Barrister RPC here: http://barrister.bitmechanic.com
+
 ## Usage
 
 To instantiate a Redis transport, at a minimum you need the name of the list
@@ -35,7 +39,7 @@ For more advanced users, additional options can be specified:
 ```ruby
 
 opts = { database_url: ENV['OPEN_REDIS_URL'], list_name: 'some_list_name' }
-container_b = Barrister::RedisContainer.new './user_service.json', UserService.new, opts
+container_b = Barrister::RedisContainer.new './user_service.json', [HandlerA.new, HandlerB.new], opts
 container_b.start
 
 ```
